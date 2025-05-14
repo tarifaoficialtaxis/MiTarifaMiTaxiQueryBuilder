@@ -14,6 +14,7 @@
 		382F767D2DD48437001A9923 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 382F767C2DD48437001A9923 /* FirebaseCore */; };
 		382F767F2DD48457001A9923 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382F767E2DD48452001A9923 /* ContentViewModel.swift */; };
 		382F76812DD48493001A9923 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 382F76802DD48493001A9923 /* FirebaseFirestore */; };
+		382F76842DD48E0C001A9923 /* JsonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382F76832DD48E06001A9923 /* JsonHelper.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -23,6 +24,7 @@
 		382F76742DD483A8001A9923 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		382F76752DD483A8001A9923 /* MiTarifaMiTaxiQueryBuilderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiTarifaMiTaxiQueryBuilderApp.swift; sourceTree = "<group>"; };
 		382F767E2DD48452001A9923 /* ContentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentViewModel.swift; sourceTree = "<group>"; };
+		382F76832DD48E06001A9923 /* JsonHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonHelper.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +60,7 @@
 		382F76762DD483A8001A9923 /* MiTarifaMiTaxiQueryBuilder */ = {
 			isa = PBXGroup;
 			children = (
+				382F76822DD48E01001A9923 /* Helpers */,
 				382F76742DD483A8001A9923 /* GoogleService-Info.plist */,
 				382F76722DD483A8001A9923 /* Assets.xcassets */,
 				382F76732DD483A8001A9923 /* ContentView.swift */,
@@ -72,6 +75,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		382F76822DD48E01001A9923 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				382F76832DD48E06001A9923 /* JsonHelper.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +164,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				382F76772DD483A8001A9923 /* ContentView.swift in Sources */,
+				382F76842DD48E0C001A9923 /* JsonHelper.swift in Sources */,
 				382F76782DD483A8001A9923 /* MiTarifaMiTaxiQueryBuilderApp.swift in Sources */,
 				382F767F2DD48457001A9923 /* ContentViewModel.swift in Sources */,
 			);

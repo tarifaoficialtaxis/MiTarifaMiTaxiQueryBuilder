@@ -14,7 +14,9 @@ class ContentViewModel: ObservableObject {
     let db = Firestore.firestore()
     
     init() {
-        Task { await duplicateDocument(originalDocumentID: "ROScb7V22U0xWLNQBJjD")}
+        //Task { await duplicateDocument(originalDocumentID: "ROScb7V22U0xWLNQBJjD") }
+        Task { await fetchUserTripsForDate(userId: "Tu4XNyUFxzc1cuEezkxAtmPD5LN2", dateString: "13-05-2025") }
+        //Task { await fetchData() }
     }
     
     func fetchData() async {
@@ -24,30 +26,12 @@ class ContentViewModel: ObservableObject {
         do {
             
             let contactsSnapshot = try await db.collection("rates")
-            //.whereField("city", isEqualTo: "Bogotá")
                 .getDocuments()
             
-            var documentsData: [[String: Any]] = []
-            for document in contactsSnapshot.documents {
-                documentsData.append(document.data())
-            }
-            
-            let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted // For readable JSON output
-            
-            do {
-                let jsonData = try JSONSerialization.data(withJSONObject: documentsData, options: .prettyPrinted)
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    print("\n--- Firestore Data as JSON (from Dictionaries) ---\n")
-                    print(jsonString)
-                }
-                
-            } catch {
-                print("Error converting data to JSON: \(error.localizedDescription)")
-            }
+            JSONHelper.processAndPrintQuerySnapshot(snapshot: contactsSnapshot, title: "Firestore Rates Data as JSON", emptyMessage: "No rates found.")
             
         } catch {
-            print("Error fetching trips: \(error.localizedDescription)")
+            print("Error fetching rates: \(error.localizedDescription)")
             
         }
     }
@@ -71,6 +55,53 @@ class ContentViewModel: ObservableObject {
             
         } catch {
             print("Error duplicating document \(originalDocumentID): \(error.localizedDescription)")
+        }
+    }
+    
+    func fetchUserTripsForDate(userId: String, dateString: String) async {
+        let db = Firestore.firestore()
+
+        let inputDateFormatter = DateFormatter()
+        inputDateFormatter.dateFormat = "dd-MM-yyyy"
+        inputDateFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+
+        guard let specificDate = inputDateFormatter.date(from: dateString) else {
+            print("Error: Invalid date string format. Please use dd-MM-yyyy")
+            return
+        }
+
+        var utcCalendar = Calendar.current
+        guard let utcTimeZone = TimeZone(secondsFromGMT: 0) else {
+            print("Error creating UTC TimeZone")
+            return
+        }
+        utcCalendar.timeZone = utcTimeZone
+
+        let startOfSpecifiedDayUTC = utcCalendar.startOfDay(for: specificDate)
+
+        guard let startOfNextDayUTC = utcCalendar.date(byAdding: .day, value: 1, to: startOfSpecifiedDayUTC) else {
+            print("Error calculating start of the next day UTC")
+            return
+        }
+
+        let isoDateFormatter = ISO8601DateFormatter()
+        isoDateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+
+        let startOfSpecifiedDayString = isoDateFormatter.string(from: startOfSpecifiedDayUTC)
+        let startOfNextDayString = isoDateFormatter.string(from: startOfNextDayUTC)
+
+        do {
+            let tripsSnapshot = try await db.collection("trips")
+                .whereField("userId", isEqualTo: userId)
+                .whereField("endHour", isGreaterThanOrEqualTo: startOfSpecifiedDayString)
+                .whereField("endHour", isLessThan: startOfNextDayString)
+                .getDocuments()
+
+            let emptyMessage = "No trips found for \(dateString) (from \(startOfSpecifiedDayString) to \(startOfNextDayString))."
+            JSONHelper.processAndPrintQuerySnapshot(snapshot: tripsSnapshot, title: "User Trips for \(dateString)", emptyMessage: emptyMessage)
+
+        } catch {
+            print("Error fetching user trips for \(dateString): \(error.localizedDescription)")
         }
     }
 }
