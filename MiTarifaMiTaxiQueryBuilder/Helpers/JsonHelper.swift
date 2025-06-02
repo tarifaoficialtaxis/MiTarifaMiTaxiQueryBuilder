@@ -22,13 +22,34 @@ class JSONHelper {
         }
     }
     
+    private static func convertTimestamps(in data: [String: Any]) -> [String: Any] {
+        var processedData = [String: Any]()
+        for (key, value) in data {
+            if let timestamp = value as? Timestamp {
+                let dateFormatter = ISO8601DateFormatter()
+                dateFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                processedData[key] = dateFormatter.string(from: timestamp.dateValue())
+            } else if let nestedData = value as? [String: Any] {
+                processedData[key] = convertTimestamps(in: nestedData)
+            } else if let nestedArray = value as? [[String: Any]] {
+                processedData[key] = nestedArray.map { convertTimestamps(in: $0) }
+            }
+            else {
+                processedData[key] = value
+            }
+        }
+        return processedData
+    }
+
     static func processAndPrintQuerySnapshot(snapshot: QuerySnapshot, title: String, emptyMessage: String) {
         if snapshot.isEmpty {
             print(emptyMessage)
         } else {
             var documentsData: [[String: Any]] = []
             for document in snapshot.documents {
-                documentsData.append(document.data())
+                let data = document.data()
+                let processedData = convertTimestamps(in: data)
+                documentsData.append(processedData)
             }
             JSONHelper.printAsJSON(data: documentsData, title: title)
         }

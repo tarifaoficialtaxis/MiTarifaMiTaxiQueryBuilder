@@ -14,8 +14,8 @@ class ContentViewModel: ObservableObject {
     let db = Firestore.firestore()
     
     init() {
-        //Task { await duplicateDocument(originalDocumentID: "ROScb7V22U0xWLNQBJjD") }
-        Task { await fetchUserTripsForDate(userId: "Tu4XNyUFxzc1cuEezkxAtmPD5LN2", dateString: "13-05-2025") }
+        //Task { await duplicateDocument(collection: "contacts", documentID: "ENBZmeWdMqP1NwSjegve") }
+        Task { await fetchUserTripsForDate(userId: "uIeFGe937wd0d0r5ItGK7RfFKut2", dateString: "02-06-2025") }
         //Task { await fetchData() }
     }
     
@@ -25,36 +25,38 @@ class ContentViewModel: ObservableObject {
         
         do {
             
-            let contactsSnapshot = try await db.collection("rates")
+            let snapshot = try await db.collection("users")
+                .whereField("city", isEqualTo: "Oaxaca")
+                //.whereField("lastActive", isNotEqualTo: NSNull())
                 .getDocuments()
             
-            JSONHelper.processAndPrintQuerySnapshot(snapshot: contactsSnapshot, title: "Firestore Rates Data as JSON", emptyMessage: "No rates found.")
+            JSONHelper.processAndPrintQuerySnapshot(snapshot: snapshot, title: "Firestore Data as JSON", emptyMessage: "No data found.")
             
         } catch {
-            print("Error fetching rates: \(error.localizedDescription)")
+            print("Error fetching data: \(error.localizedDescription)")
             
         }
     }
     
-    func duplicateDocument(originalDocumentID: String) async {
-        let docRef = db.collection("rates").document(originalDocumentID)
+    func duplicateDocument(collection: String, documentID: String) async {
+        let docRef = db.collection(collection).document(documentID)
         
         do {
             let documentSnapshot = try await docRef.getDocument()
             
             guard let dataToDuplicate = documentSnapshot.data() else {
-                print("Error: Document \(originalDocumentID) does not exist or has no data.")
+                print("Error: Document \(documentID) does not exist or has no data.")
                 return
             }
             
             var newDocumentRef: DocumentReference?
-            newDocumentRef = try await db.collection("rates").addDocument(data: dataToDuplicate)
+            newDocumentRef = try await db.collection(collection).addDocument(data: dataToDuplicate)
             if let newID = newDocumentRef?.documentID {
-                print("Successfully duplicated document \(originalDocumentID) to new document ID: \(newID)")
+                print("Successfully duplicated document \(documentID) to new document ID: \(newID)")
             }
             
         } catch {
-            print("Error duplicating document \(originalDocumentID): \(error.localizedDescription)")
+            print("Error duplicating document \(documentID): \(error.localizedDescription)")
         }
     }
     
