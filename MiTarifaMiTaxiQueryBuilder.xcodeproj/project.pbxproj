@@ -15,6 +15,7 @@
 		382F767F2DD48457001A9923 /* ContentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382F767E2DD48452001A9923 /* ContentViewModel.swift */; };
 		382F76812DD48493001A9923 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 382F76802DD48493001A9923 /* FirebaseFirestore */; };
 		382F76842DD48E0C001A9923 /* JsonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 382F76832DD48E06001A9923 /* JsonHelper.swift */; };
+		38C136CA2E1BFD290030664A /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 38C136C92E1BFD290030664A /* FirebaseAuth */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				382F767D2DD48437001A9923 /* FirebaseCore in Frameworks */,
+				38C136CA2E1BFD290030664A /* FirebaseAuth in Frameworks */,
 				382F76812DD48493001A9923 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,6 +106,7 @@
 			packageProductDependencies = (
 				382F767C2DD48437001A9923 /* FirebaseCore */,
 				382F76802DD48493001A9923 /* FirebaseFirestore */,
+				38C136C92E1BFD290030664A /* FirebaseAuth */,
 			);
 			productName = MiTarifaMiTaxiQueryBuilder;
 			productReference = 382F76612DD48357001A9923 /* MiTarifaMiTaxiQueryBuilder.app */;
@@ -394,6 +397,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 382F766F2DD48380001A9923 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		38C136C92E1BFD290030664A /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 382F766F2DD48380001A9923 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

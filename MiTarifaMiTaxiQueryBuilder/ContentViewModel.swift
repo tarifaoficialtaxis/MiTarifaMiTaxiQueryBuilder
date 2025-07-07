@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import FirebaseAuth
 import FirebaseCore
 import FirebaseFirestore
 
@@ -14,11 +15,37 @@ class ContentViewModel: ObservableObject {
     let db = Firestore.firestore()
     
     init() {
-        //Task { await duplicateDocument(collection: "contacts", documentID: "3r5VVAJpxpbtx7u7SNlw") }
-        //Task { await fetchUserTripsForDate(userId: "uIeFGe937wd0d0r5ItGK7RfFKut2", dateString: "02-06-2025") }
-        //Task { await fetchData() }
         
-        Task { await addRoleToUsers() }
+        Task { await authenticateUser() }
+        
+    }
+    
+    
+    func callActions() {
+        //Task { await duplicateDocument(collection: "dynamicRates", documentID: "MRyochybFaKlGoqJo8GO") }
+        //Task { await duplicateDocument(collection: "dynamicContacts", documentID: "kxCcFPbISE0WZZb1u4Eh") }
+        //Task { await duplicateDocument(collection: "dynamicPqrs", documentID: "MRyochybFaKlGoqJo8GO") }
+
+
+        //Task { await fetchUserTripsForDate(userId: "uIeFGe937wd0d0r5ItGK7RfFKut2", dateString: "07-06-2025") }
+        Task { await fetchData() }
+    }
+    
+    
+    func authenticateUser() async {
+        
+        let username = "mateotest1@yopmail.com"
+        let password = "12345678#"
+        
+        do {
+            try await Auth.auth().signIn(withEmail: username.trimmingCharacters(in: .whitespaces), password: password)
+            callActions()
+            
+        } catch let error as NSError {
+            print("Error logging in: \(error.code)")
+        }
+        
+        
     }
     
     func fetchData() async {
@@ -32,7 +59,9 @@ class ContentViewModel: ObservableObject {
             //.whereField("lastActive", isNotEqualTo: NSNull())
                 .getDocuments()
             
-            JSONHelper.processAndPrintQuerySnapshot(snapshot: snapshot, title: "Firestore Data as JSON", emptyMessage: "No data found.")
+            print("Users: \(snapshot.documents.count)")
+            
+            //JSONHelper.processAndPrintQuerySnapshot(snapshot: snapshot, title: "Firestore Data as JSON", emptyMessage: "No data found.")
             
         } catch {
             print("Error fetching data: \(error.localizedDescription)")
@@ -109,19 +138,4 @@ class ContentViewModel: ObservableObject {
         }
     }
     
-    func addRoleToUsers() async {
-        do {
-            let snapshot = try await db.collection("users").getDocuments()
-            for doc in snapshot.documents {
-                // Recupera el valor actual (puede no existir o ser NSNull)
-                let role = doc.data()["role"]
-                if role == nil || role is NSNull {
-                    try await doc.reference.updateData(["role": "USER"])
-                }
-            }
-            print("✅ Se ha añadido `role: \"USER\"` a todos los usuarios con role faltante o nulo")
-        } catch {
-            print("❌ Error actualizando roles: \(error.localizedDescription)")
-        }
-    }
 }
